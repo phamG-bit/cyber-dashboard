@@ -39,15 +39,29 @@ const itemVariants = {
 
 export default function Dashboard() {
   return (
+    // Root fade-in is explicit — variant-only transitions don't animate the
+    // container's own opacity when the transition only has staggerChildren.
     <motion.div
       className="min-h-screen bg-cyber-black"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4 }}
     >
       <Navbar />
 
       <main className="pt-20 px-4 md:px-8 pb-8 max-w-7xl mx-auto">
+
+        {/* ── TEST BANNER — confirms Dashboard mounted ── */}
+        <div className="mb-4 px-4 py-2 border border-neon-cyan bg-neon-cyan/10 text-neon-cyan font-mono text-xs tracking-widest">
+          ✓ DASHBOARD MOUNTED — TRANSITION OK
+        </div>
+
+        {/* Stagger wrapper — separate from root so parent opacity animates independently */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
 
         {/* Page title */}
         <motion.div className="mb-8 mt-4" variants={itemVariants}>
@@ -188,6 +202,8 @@ export default function Dashboard() {
             <span className="text-xs font-mono text-neon-cyan/40 tracking-widest">ALL SYSTEMS NOMINAL</span>
           </div>
         </motion.div>
+
+        </motion.div> {/* end stagger wrapper */}
       </main>
     </motion.div>
   )
