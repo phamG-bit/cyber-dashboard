@@ -102,7 +102,7 @@ export default function Arsenal() {
 
   return (
     <motion.div
-      className="min-h-screen bg-cyber-black"
+      className="relative z-10 min-h-screen"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}

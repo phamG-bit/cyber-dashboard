@@ -54,3 +54,34 @@ body::before {
     box-shadow: 0 0 0 1px #ff0033, 0 0 8px #ff0033, inset 0 0 8px rgba(255, 0, 51, 0.1);
   }
 }
+
+/* ── Animated Background layer ── */
+@keyframes bg-grid-scroll {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(0, 44px, 0); }
+}
+
+@keyframes bg-particle-float {
+  0%, 100% { transform: translate3d(0, 0, 0); opacity: var(--p-min, 0.1); }
+  25%      { transform: translate3d(var(--dx, 0), calc(-1 * var(--dy, 12px)), 0); opacity: var(--p-max, 0.4); }
+  50%      { transform: translate3d(calc(-1 * var(--dx, 0)), calc(-2 * var(--dy, 12px)), 0); opacity: var(--p-min, 0.1); }
+  75%      { transform: translate3d(var(--dx, 0), calc(-1 * var(--dy, 12px)), 0); opacity: var(--p-max, 0.4); }
+}
+
+.bg-grid-anim {
+  animation: bg-grid-scroll 14s linear infinite;
+  will-change: transform;
+}
+
+.bg-particle-anim {
+  animation-name: bg-particle-float;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-grid-anim,
+  .bg-particle-anim {
+    animation: none;
+  }
+}

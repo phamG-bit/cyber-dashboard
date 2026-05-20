@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import LoadingScreen from './components/LoadingScreen'
 import ScanlineOverlay from './components/ScanlineOverlay'
+import Background from './components/Background'
 import Navbar from './components/Navbar'
 import Dashboard from './pages/Dashboard'
 import Arsenal from './pages/Arsenal'
@@ -16,6 +17,7 @@ export default function App() {
 
   return (
     <>
+      <Background />
       <ScanlineOverlay />
 
       {/* Navbar mounts once after loading and persists across page changes */}

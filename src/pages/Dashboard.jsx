@@ -41,7 +41,7 @@ export default function Dashboard() {
     // Root fade-in is explicit — variant-only transitions don't animate the
     // container's own opacity when the transition only has staggerChildren.
     <motion.div
-      className="min-h-screen bg-cyber-black"
+      className="relative z-10 min-h-screen"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
