@@ -1,9 +1,15 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 
-const NAV_LINKS = ['DASHBOARD', 'ANALYTICS', 'NETWORK', 'TERMINAL', 'SETTINGS']
+const NAV_ITEMS = [
+  { label: 'DASHBOARD', page: 'dashboard' },
+  { label: 'ARSENAL',   page: 'arsenal' },
+  { label: 'ANALYTICS', page: null },
+  { label: 'NETWORK',   page: null },
+  { label: 'SETTINGS',  page: null },
+]
 
-export default function Navbar() {
+export default function Navbar({ activePage = 'dashboard', onNavigate }) {
   const [clock, setClock] = useState('')
   const [glitching, setGlitching] = useState(false)
 
@@ -31,34 +37,19 @@ export default function Navbar() {
       transition={{ delay: 0.1, type: 'spring', stiffness: 120, damping: 20 }}
     >
       {/* Logo with glitch */}
-      <div className="relative select-none">
-        <span
-          className="text-xl font-mono font-bold text-neon-yellow tracking-widest"
-          style={{ textShadow: '0 0 8px #f5ff00, 0 0 16px #f5ff00' }}
-        >
+      <div className="relative select-none cursor-pointer" onClick={() => onNavigate?.('dashboard')}>
+        <span className="text-xl font-mono font-bold text-neon-yellow tracking-widest" style={{ textShadow: '0 0 8px #f5ff00, 0 0 16px #f5ff00' }}>
           CYBER
         </span>
-        <span
-          className="text-xl font-mono font-bold text-neon-cyan tracking-widest"
-          style={{ textShadow: '0 0 8px #00ffff, 0 0 16px #00ffff' }}
-        >
+        <span className="text-xl font-mono font-bold text-neon-cyan tracking-widest" style={{ textShadow: '0 0 8px #00ffff, 0 0 16px #00ffff' }}>
           .OS
         </span>
-        {/* Glitch layers */}
         {glitching && (
           <>
-            <span
-              className="absolute inset-0 text-xl font-mono font-bold text-neon-red tracking-widest"
-              style={{ clipPath: 'inset(30% 0 50% 0)', transform: 'translate(3px, 0)', opacity: 0.8 }}
-              aria-hidden="true"
-            >
+            <span className="absolute inset-0 text-xl font-mono font-bold text-neon-red tracking-widest" style={{ clipPath: 'inset(30% 0 50% 0)', transform: 'translate(3px, 0)', opacity: 0.8 }} aria-hidden="true">
               CYBER.OS
             </span>
-            <span
-              className="absolute inset-0 text-xl font-mono font-bold text-neon-cyan tracking-widest"
-              style={{ clipPath: 'inset(65% 0 10% 0)', transform: 'translate(-3px, 0)', opacity: 0.8 }}
-              aria-hidden="true"
-            >
+            <span className="absolute inset-0 text-xl font-mono font-bold text-neon-cyan tracking-widest" style={{ clipPath: 'inset(65% 0 10% 0)', transform: 'translate(-3px, 0)', opacity: 0.8 }} aria-hidden="true">
               CYBER.OS
             </span>
           </>
@@ -67,19 +58,38 @@ export default function Navbar() {
 
       {/* Nav links */}
       <div className="hidden md:flex items-center gap-6">
-        {NAV_LINKS.map((link, i) => (
-          <motion.a
-            key={link}
-            href="#"
-            className="text-xs font-mono tracking-widest text-neon-yellow/60 hover:text-neon-cyan transition-colors duration-200 cursor-pointer"
-            whileHover={{ textShadow: '0 0 8px #00ffff' }}
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 + i * 0.07 }}
-          >
-            {link}
-          </motion.a>
-        ))}
+        {NAV_ITEMS.map((item, i) => {
+          const isActive = item.page === activePage
+          const isNavigable = item.page !== null
+          return (
+            <div key={item.label} className="relative flex flex-col items-center gap-1">
+              <motion.button
+                onClick={() => isNavigable && onNavigate?.(item.page)}
+                className="text-xs font-mono tracking-widest transition-colors duration-150"
+                style={{
+                  color:  isActive ? '#f5ff00' : isNavigable ? 'rgba(245,255,0,0.45)' : 'rgba(245,255,0,0.2)',
+                  cursor: isNavigable ? 'pointer' : 'default',
+                  textShadow: isActive ? '0 0 8px #f5ff00' : 'none',
+                }}
+                whileHover={isNavigable ? { color: '#f5ff00', textShadow: '0 0 8px #f5ff00' } : {}}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 + i * 0.07 }}
+              >
+                {item.label}
+              </motion.button>
+              {/* Active underline indicator */}
+              {isActive && (
+                <motion.div
+                  className="absolute -bottom-1 left-0 right-0 h-px"
+                  style={{ background: '#f5ff00', boxShadow: '0 0 6px #f5ff00' }}
+                  layoutId="activeNav"
+                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                />
+              )}
+            </div>
+          )
+        })}
       </div>
 
       {/* Clock + status */}
@@ -88,10 +98,7 @@ export default function Navbar() {
           <span className="w-2 h-2 rounded-full bg-neon-cyan animate-pulse" />
           <span className="text-xs font-mono text-neon-cyan/60 tracking-widest hidden sm:block">ONLINE</span>
         </div>
-        <span
-          className="text-sm font-mono text-neon-cyan tracking-widest"
-          style={{ textShadow: '0 0 6px #00ffff' }}
-        >
+        <span className="text-sm font-mono text-neon-cyan tracking-widest" style={{ textShadow: '0 0 6px #00ffff' }}>
           {clock}
         </span>
       </div>

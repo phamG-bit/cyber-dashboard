@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion'
-import Navbar from '../components/Navbar'
 import AnalyticsCard from '../components/AnalyticsCard'
 import TerminalPanel from '../components/TerminalPanel'
 import HUDPanel from '../components/HUDPanel'
@@ -45,18 +44,12 @@ export default function Dashboard() {
       className="min-h-screen bg-cyber-black"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.4 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.35 }}
     >
-      <Navbar />
-
       <main className="pt-20 px-4 md:px-8 pb-8 max-w-7xl mx-auto">
 
-        {/* ── TEST BANNER — confirms Dashboard mounted ── */}
-        <div className="mb-4 px-4 py-2 border border-neon-cyan bg-neon-cyan/10 text-neon-cyan font-mono text-xs tracking-widest">
-          ✓ DASHBOARD MOUNTED — TRANSITION OK
-        </div>
-
-        {/* Stagger wrapper — separate from root so parent opacity animates independently */}
+        {/* Stagger wrapper */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
