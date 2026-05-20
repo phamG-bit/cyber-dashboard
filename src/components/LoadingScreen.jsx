@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 
 const BOOT_LINES = [
@@ -25,6 +25,7 @@ export default function LoadingScreen({ onComplete }) {
   const [visibleLines, setVisibleLines] = useState([])
   const [progress, setProgress] = useState(0)
   const [done, setDone] = useState(false)
+  const scrollRef = useRef(null)
 
   useEffect(() => {
     let lineIndex = 0
@@ -41,6 +42,12 @@ export default function LoadingScreen({ onComplete }) {
     }, 320)
     return () => clearInterval(interval)
   }, [onComplete])
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+    }
+  }, [visibleLines])
 
   return (
     <motion.div
@@ -65,14 +72,18 @@ export default function LoadingScreen({ onComplete }) {
         </motion.div>
 
         {/* Terminal window */}
-        <div className="border border-neon-cyan/30 bg-cyber-dark rounded-none p-4 mb-6 h-64 overflow-hidden">
-          <div className="flex items-center gap-2 mb-3 pb-2 border-b border-neon-cyan/20">
+        <div className="border border-neon-cyan/30 bg-cyber-dark rounded-none mb-6 h-64 flex flex-col overflow-hidden">
+          <div className="flex items-center gap-2 px-4 py-3 border-b border-neon-cyan/20 shrink-0">
             <span className="w-2.5 h-2.5 rounded-full bg-neon-red/70" />
             <span className="w-2.5 h-2.5 rounded-full bg-neon-yellow/70" />
             <span className="w-2.5 h-2.5 rounded-full bg-neon-cyan/70" />
             <span className="ml-2 text-xs text-neon-cyan/40 tracking-widest">BOOT_SEQUENCE.sh</span>
           </div>
-          <div className="space-y-1">
+          <div
+            ref={scrollRef}
+            className="flex-1 overflow-y-auto px-4 py-3 space-y-1"
+            style={{ scrollbarWidth: 'none' }}
+          >
             {visibleLines.map((line, i) => (
               <motion.p
                 key={i}
