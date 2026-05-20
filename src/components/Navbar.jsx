@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useDesignMode, ComponentTag } from '../context/DesignModeContext'
 import { useUISound } from '../hooks/useUISound'
 
@@ -14,6 +14,7 @@ const NAV_ITEMS = [
 export default function Navbar({ activePage = 'dashboard', onNavigate }) {
   const [clock, setClock] = useState('')
   const [glitching, setGlitching] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { isDesignMode, toggleDesignMode } = useDesignMode()
   const sounds = useUISound()
 
@@ -32,7 +33,7 @@ export default function Navbar({ activePage = 'dashboard', onNavigate }) {
     return () => clearInterval(trigger)
   }, [])
 
-  return (
+  return (<>
     <motion.nav
       className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-3 bg-cyber-black/90 backdrop-blur-sm"
       style={{
@@ -125,10 +126,54 @@ export default function Navbar({ activePage = 'dashboard', onNavigate }) {
           <span className="w-2 h-2 rounded-full bg-neon-cyan animate-pulse" />
           <span className="text-xs font-mono text-neon-cyan/60 tracking-widest hidden sm:block">ONLINE</span>
         </div>
+        <button
+          className="md:hidden cursor-pointer"
+          onClick={() => { sounds.click(); setMobileMenuOpen(v => !v) }}
+          style={{ color: mobileMenuOpen ? '#00ffff' : 'rgba(245,255,0,0.7)' }}
+        >
+          <span className="text-xl font-mono leading-none">{mobileMenuOpen ? '✕' : '≡'}</span>
+        </button>
         <span className="text-sm font-mono text-neon-cyan tracking-widest" style={{ textShadow: '0 0 6px #00ffff' }}>
           {clock}
         </span>
       </div>
     </motion.nav>
-  )
+
+    <AnimatePresence>
+      {mobileMenuOpen && (
+        <motion.div
+          className="fixed inset-x-0 top-0 bottom-0 z-40 flex flex-col md:hidden"
+          style={{ background: '#030303', paddingTop: '52px' }}
+          initial={{ opacity: 0, y: -16 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -16 }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
+        >
+          {NAV_ITEMS.map((item) => {
+            const isActive = item.page === activePage
+            const isNavigable = item.page !== null
+            return (
+              <button
+                key={item.label}
+                onClick={() => {
+                  if (isNavigable) { sounds.click(); onNavigate?.(item.page); setMobileMenuOpen(false) }
+                }}
+                className="flex items-center gap-3 px-8 py-5 font-mono tracking-[0.25em] text-sm text-left w-full"
+                style={{
+                  borderBottom: '1px solid rgba(245,255,0,0.05)',
+                  color:      isActive ? '#f5ff00' : isNavigable ? 'rgba(245,255,0,0.4)' : 'rgba(245,255,0,0.12)',
+                  cursor:     isNavigable ? 'pointer' : 'default',
+                  textShadow: isActive ? '0 0 10px #f5ff00' : 'none',
+                }}
+              >
+                <span style={{ color: isActive ? '#f5ff00' : 'rgba(245,255,0,0.15)' }}>▶</span>
+                {item.label}
+                {!isNavigable && <span className="ml-auto text-xs opacity-40">LOCKED</span>}
+              </button>
+            )
+          })}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  </>)
 }
