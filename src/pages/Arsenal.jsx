@@ -175,7 +175,7 @@ function SystemStatus() {
 
   return (
     <div
-      className="flex items-center gap-6 px-4 py-1.5 shrink-0 relative"
+      className="flex items-center gap-6 px-4 py-1.5 shrink-0 relative overflow-x-auto"
       style={{
         borderBottom: '1px solid rgba(245,255,0,0.07)',
         background: '#050505',
@@ -375,6 +375,8 @@ export default function Arsenal() {
   const { isDesignMode } = useDesignMode()
   const sounds = useUISound()
 
+  const [mobileView, setMobileView] = useState('list')
+
   const filtered = activeFilter === null
     ? WEAPONS
     : WEAPONS.filter(w => w.type === activeFilter)
@@ -404,9 +406,8 @@ export default function Arsenal() {
 
         {/* LEFT — weapon list */}
         <div
-          className="flex flex-col shrink-0 relative"
+          className={`flex-col shrink-0 relative w-full md:w-72 ${mobileView === 'list' ? 'flex' : 'hidden'} md:flex`}
           style={{
-            width: '288px',
             borderRight: '1px solid rgba(245,255,0,0.07)',
             background: '#050505',
             ...(isDesignMode ? { outline: '1px dashed rgba(245,255,0,0.45)' } : {}),
@@ -463,7 +464,7 @@ export default function Arsenal() {
                     key={w.id}
                     weapon={w}
                     isSelected={selected.id === w.id}
-                    onClick={() => setSelected(w)}
+                    onClick={() => { setSelected(w); setMobileView('detail') }}
                     index={i}
                   />
                 ))}
@@ -474,13 +475,20 @@ export default function Arsenal() {
 
         {/* RIGHT — inspector panel */}
         <div
-          className="flex-1 overflow-hidden relative"
+          className={`overflow-hidden relative flex-1 ${mobileView === 'detail' ? 'flex flex-col' : 'hidden'} md:block`}
           style={{
             background: '#040404',
             ...(isDesignMode ? { outline: '1px dashed rgba(0,255,255,0.3)' } : {}),
           }}
         >
           {isDesignMode && <ComponentTag name="WeaponPanel" />}
+          <button
+            className="md:hidden flex items-center gap-2 px-4 py-2 text-xs font-mono tracking-widest cursor-pointer shrink-0"
+            style={{ color: 'rgba(0,255,255,0.5)', borderBottom: '1px solid rgba(255,255,255,0.04)' }}
+            onClick={() => setMobileView('list')}
+          >
+            ← BACK
+          </button>
           <AnimatePresence mode="wait">
             <WeaponInspector key={selected.id} weapon={selected} />
           </AnimatePresence>
