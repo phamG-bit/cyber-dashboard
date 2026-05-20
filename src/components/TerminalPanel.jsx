@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
+import { useDesignMode, ComponentTag } from '../context/DesignModeContext'
 
 const LINE_COLORS = {
   cmd:  '#f5ff00',
@@ -11,6 +12,7 @@ const LINE_COLORS = {
 export default function TerminalPanel({ title = 'TERMINAL', lines = [], height = 'h-52' }) {
   const [visible, setVisible] = useState([])
   const scrollRef = useRef(null)
+  const { isDesignMode } = useDesignMode()
 
   useEffect(() => {
     let i = 0
@@ -34,11 +36,14 @@ export default function TerminalPanel({ title = 'TERMINAL', lines = [], height =
 
   return (
     <motion.div
-      className="border border-neon-cyan/30 bg-cyber-dark overflow-hidden"
+      className="relative border border-neon-cyan/30 bg-cyber-dark overflow-hidden"
+      style={isDesignMode ? { outline: '1px dashed rgba(0,255,255,0.5)', outlineOffset: '2px' } : {}}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
+      {isDesignMode && <ComponentTag name="TerminalPanel" />}
+
       {/* Header */}
       <div className="flex items-center gap-2 px-4 py-2 bg-cyber-muted border-b border-neon-cyan/20">
         <span className="w-2.5 h-2.5 rounded-full bg-neon-red/70" />

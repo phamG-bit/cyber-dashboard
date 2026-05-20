@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { useDesignMode, ComponentTag } from '../context/DesignModeContext'
 
 const ACCENT_COLORS = {
   cyan:   { border: '#00ffff', text: '#00ffff', dot: '#00ff88' },
@@ -8,6 +9,7 @@ const ACCENT_COLORS = {
 
 export default function HUDPanel({ title, children, className = '', accentColor = 'cyan', active = true }) {
   const c = ACCENT_COLORS[accentColor] ?? ACCENT_COLORS.cyan
+  const { isDesignMode } = useDesignMode()
 
   return (
     <motion.div
@@ -17,6 +19,7 @@ export default function HUDPanel({ title, children, className = '', accentColor 
         backdropFilter: 'blur(8px)',
         WebkitBackdropFilter: 'blur(8px)',
         border: `1px solid ${c.border}30`,
+        ...(isDesignMode ? { outline: '1px dashed rgba(245,255,0,0.5)', outlineOffset: '2px' } : {}),
       }}
       initial={{ opacity: 0, x: -20 }}
       animate={{
@@ -34,6 +37,8 @@ export default function HUDPanel({ title, children, className = '', accentColor 
         boxShadow: { repeat: Infinity, duration: 3, ease: 'easeInOut' },
       }}
     >
+      {isDesignMode && <ComponentTag name="HUDPanel" accent="yellow" />}
+
       {/* HUD corner brackets */}
       {[
         { top: 0, left: 0, borderTop: 2, borderLeft: 2 },
@@ -47,10 +52,10 @@ export default function HUDPanel({ title, children, className = '', accentColor 
           style={{
             ...pos,
             borderColor: c.border,
-            borderTopWidth: pos.borderTop,
-            borderLeftWidth: pos.borderLeft,
+            borderTopWidth:    pos.borderTop,
+            borderLeftWidth:   pos.borderLeft,
             borderBottomWidth: pos.borderBottom,
-            borderRightWidth: pos.borderRight,
+            borderRightWidth:  pos.borderRight,
             borderStyle: 'solid',
           }}
           initial={{ opacity: 0 }}
@@ -67,10 +72,7 @@ export default function HUDPanel({ title, children, className = '', accentColor 
           animate={{ opacity: active ? [1, 0.4, 1] : 1 }}
           transition={{ repeat: Infinity, duration: 2 }}
         />
-        <span
-          className="text-xs font-mono tracking-widest uppercase"
-          style={{ color: c.text, opacity: 0.7 }}
-        >
+        <span className="text-xs font-mono tracking-widest uppercase" style={{ color: c.text, opacity: 0.7 }}>
           {title}
         </span>
         <span className="ml-auto text-xs font-mono" style={{ color: c.text, opacity: 0.3 }}>
@@ -78,7 +80,6 @@ export default function HUDPanel({ title, children, className = '', accentColor 
         </span>
       </div>
 
-      {/* Content */}
       {children}
     </motion.div>
   )

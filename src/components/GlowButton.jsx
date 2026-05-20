@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { useDesignMode } from '../context/DesignModeContext'
 
 const COLORS = {
   yellow: {
@@ -26,16 +27,18 @@ const COLORS = {
 
 export default function GlowButton({ children, color = 'yellow', onClick, className = '' }) {
   const c = COLORS[color] ?? COLORS.yellow
+  const { isDesignMode } = useDesignMode()
 
   return (
     <motion.button
       onClick={onClick}
       className={`font-mono uppercase tracking-widest text-sm px-6 py-2.5 cursor-pointer transition-all duration-150 ${className}`}
       style={{
-        color: c.text,
+        color:      c.text,
         background: c.bg,
-        border: `1px solid ${c.border}`,
-        boxShadow: `0 0 0 1px transparent`,
+        border:     `1px solid ${c.border}`,
+        boxShadow:  `0 0 0 1px transparent`,
+        ...(isDesignMode ? { outline: '1px dashed rgba(245,255,0,0.45)', outlineOffset: '2px' } : {}),
       }}
       whileHover={{
         scale: 1.04,

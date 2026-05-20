@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
+import { useDesignMode, ComponentTag } from '../context/DesignModeContext'
 
 const ACCENT = {
   yellow: { text: '#f5ff00', glow: '0 0 6px #f5ff00', bar: '#f5ff00', border: 'rgba(245,255,0,0.25)' },
@@ -35,11 +36,15 @@ export default function AnalyticsCard({ title, value, unit = '', delta, color = 
   const c = ACCENT[color] ?? ACCENT.yellow
   const count = useCounter(value)
   const isPositive = delta >= 0
+  const { isDesignMode } = useDesignMode()
 
   return (
     <motion.div
       className="relative p-5 bg-cyber-dark overflow-hidden"
-      style={{ border: `1px solid ${c.border}` }}
+      style={{
+        border: `1px solid ${c.border}`,
+        ...(isDesignMode ? { outline: '1px dashed rgba(0,255,255,0.5)', outlineOffset: '2px' } : {}),
+      }}
       initial={{ opacity: 0, scale: 0.95, y: 20 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{ delay: index * 0.12, duration: 0.4 }}
@@ -49,6 +54,8 @@ export default function AnalyticsCard({ title, value, unit = '', delta, color = 
         transition: { duration: 0.2 },
       }}
     >
+      {isDesignMode && <ComponentTag name="AnalyticsCard" />}
+
       {/* Corner accent */}
       <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2" style={{ borderColor: c.text }} />
       <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2" style={{ borderColor: c.text }} />
@@ -57,10 +64,7 @@ export default function AnalyticsCard({ title, value, unit = '', delta, color = 
       <div className="flex items-start justify-between mb-4">
         <span className="text-xs font-mono tracking-widest text-neon-yellow/50 uppercase">{title}</span>
         {delta !== undefined && (
-          <span
-            className="text-xs font-mono"
-            style={{ color: isPositive ? '#00ffff' : '#ff0033' }}
-          >
+          <span className="text-xs font-mono" style={{ color: isPositive ? '#00ffff' : '#ff0033' }}>
             {isPositive ? '+' : ''}{delta}%
           </span>
         )}
@@ -68,10 +72,7 @@ export default function AnalyticsCard({ title, value, unit = '', delta, color = 
 
       {/* Counter */}
       <div className="mb-4">
-        <span
-          className="text-4xl font-mono font-bold tabular-nums"
-          style={{ color: c.text, textShadow: c.glow }}
-        >
+        <span className="text-4xl font-mono font-bold tabular-nums" style={{ color: c.text, textShadow: c.glow }}>
           {count.toLocaleString()}
         </span>
         {unit && (

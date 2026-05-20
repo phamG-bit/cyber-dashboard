@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { useDesignMode, ComponentTag } from '../context/DesignModeContext'
 
 const RARITY = {
   COMMON:    { color: '#00ffff' },
@@ -9,6 +10,7 @@ const RARITY = {
 
 export default function WeaponThumb({ weapon, isSelected, onClick, index }) {
   const r = RARITY[weapon.rarity] ?? RARITY.COMMON
+  const { isDesignMode } = useDesignMode()
 
   return (
     <motion.div
@@ -17,12 +19,15 @@ export default function WeaponThumb({ weapon, isSelected, onClick, index }) {
       style={{
         borderLeft: `2px solid ${isSelected ? r.color : 'transparent'}`,
         background: isSelected ? `${r.color}0a` : 'transparent',
+        ...(isDesignMode ? { outline: '1px dashed rgba(0,255,255,0.35)' } : {}),
       }}
       initial={{ opacity: 0, x: -16 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: index * 0.05, duration: 0.3 }}
       whileHover={{ background: `${r.color}07`, x: isSelected ? 0 : 2 }}
     >
+      {isDesignMode && <ComponentTag name="WeaponThumb" />}
+
       {/* Selected indicator scanline sweep */}
       {isSelected && (
         <motion.div

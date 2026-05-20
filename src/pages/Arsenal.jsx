@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import WeaponThumb from '../components/WeaponThumb'
 import GlowButton from '../components/GlowButton'
+import { useDesignMode, ComponentTag } from '../context/DesignModeContext'
 
 const WEAPONS = [
   {
@@ -115,11 +116,11 @@ const WEAPONS = [
 ]
 
 const FILTERS = [
-  { label: 'ALL',    match: null },
-  { label: 'PISTOL', match: 'PISTOL' },
-  { label: 'RIFLE',  match: 'ASSAULT RIFLE' },
-  { label: 'SNIPER', match: 'SNIPER RIFLE' },
-  { label: 'SHOTGUN',match: 'SHOTGUN' },
+  { label: 'ALL',     match: null },
+  { label: 'PISTOL',  match: 'PISTOL' },
+  { label: 'RIFLE',   match: 'ASSAULT RIFLE' },
+  { label: 'SNIPER',  match: 'SNIPER RIFLE' },
+  { label: 'SHOTGUN', match: 'SHOTGUN' },
 ]
 
 const RARITY = {
@@ -153,6 +154,7 @@ function SystemStatus() {
   const [cpu, setCpu] = useState(42)
   const [ping, setPing] = useState(14)
   const [uptime, setUptime] = useState(52327)
+  const { isDesignMode } = useDesignMode()
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -172,14 +174,20 @@ function SystemStatus() {
 
   return (
     <div
-      className="flex items-center gap-6 px-4 py-1.5 shrink-0"
-      style={{ borderBottom: '1px solid rgba(245,255,0,0.07)', background: '#050505' }}
+      className="flex items-center gap-6 px-4 py-1.5 shrink-0 relative"
+      style={{
+        borderBottom: '1px solid rgba(245,255,0,0.07)',
+        background: '#050505',
+        ...(isDesignMode ? { outline: '1px dashed rgba(245,255,0,0.5)' } : {}),
+      }}
     >
+      {isDesignMode && <ComponentTag name="SystemStatus" accent="yellow" />}
+
       {[
-        { label: 'CPU', value: `${Math.round(cpu)}%`, color: cpu > 80 ? '#ff0033' : '#00ffff' },
-        { label: 'MEM', value: '47%', color: '#00ffff' },
-        { label: 'PING', value: `${Math.round(ping)}ms`, color: ping > 50 ? '#ff0033' : '#f5ff00' },
-        { label: 'UPTIME', value: fmt(uptime), color: 'rgba(0,255,255,0.5)' },
+        { label: 'CPU',    value: `${Math.round(cpu)}%`,   color: cpu > 80 ? '#ff0033' : '#00ffff' },
+        { label: 'MEM',    value: '47%',                    color: '#00ffff' },
+        { label: 'PING',   value: `${Math.round(ping)}ms`, color: ping > 50 ? '#ff0033' : '#f5ff00' },
+        { label: 'UPTIME', value: fmt(uptime),              color: 'rgba(0,255,255,0.5)' },
       ].map(s => (
         <div key={s.label} className="flex items-center gap-2">
           <span className="text-xs font-mono tracking-widest" style={{ color: 'rgba(245,255,0,0.3)' }}>{s.label}</span>
@@ -193,6 +201,7 @@ function SystemStatus() {
           </motion.span>
         </div>
       ))}
+
       <div className="ml-auto flex items-center gap-2">
         <motion.span
           className="w-1.5 h-1.5 rounded-full"
@@ -210,16 +219,20 @@ function SystemStatus() {
 
 function WeaponInspector({ weapon }) {
   const r = RARITY[weapon.rarity] ?? RARITY.COMMON
+  const { isDesignMode } = useDesignMode()
 
   return (
     <motion.div
       key={weapon.id}
-      className="flex flex-col h-full"
+      className="flex flex-col h-full relative"
       initial={{ opacity: 0, x: 24 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -16 }}
       transition={{ duration: 0.28, ease: 'easeOut' }}
+      style={isDesignMode ? { outline: '1px dashed rgba(0,255,255,0.4)' } : undefined}
     >
+      {isDesignMode && <ComponentTag name="WeaponInspector" />}
+
       {/* Header */}
       <div className="px-8 pt-6 pb-4 shrink-0" style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
         <div className="flex items-start justify-between">
@@ -259,7 +272,6 @@ function WeaponInspector({ weapon }) {
         className="relative flex items-center justify-center shrink-0"
         style={{ height: '220px', background: '#040404', overflow: 'hidden' }}
       >
-        {/* Tech grid */}
         <div
           className="absolute inset-0"
           style={{
@@ -267,19 +279,16 @@ function WeaponInspector({ weapon }) {
             backgroundSize: '28px 28px',
           }}
         />
-        {/* Rarity glow floor */}
         <div
           className="absolute bottom-0 left-0 right-0 h-16 pointer-events-none"
           style={{ background: `linear-gradient(to top, ${r.color}10, transparent)` }}
         />
-        {/* Scanline sweep */}
         <motion.div
           className="absolute inset-x-0 pointer-events-none"
           style={{ height: '2px', background: `linear-gradient(90deg, transparent, ${r.color}40, transparent)` }}
           animate={{ top: ['-5%', '105%'] }}
           transition={{ repeat: Infinity, duration: 3.5, ease: 'linear', repeatDelay: 1.2 }}
         />
-        {/* Corner brackets */}
         {[
           'top-2 left-2 border-t border-l',
           'top-2 right-2 border-t border-r',
@@ -299,18 +308,15 @@ function WeaponInspector({ weapon }) {
         />
       </div>
 
-      {/* Stats + actions — scrollable */}
+      {/* Stats + actions */}
       <div className="flex-1 overflow-y-auto px-8 py-5 space-y-6">
-
-        {/* Stat bars */}
         <div className="space-y-4">
           <p className="text-xs font-mono tracking-[0.25em]" style={{ color: 'rgba(245,255,0,0.3)' }}>PERFORMANCE</p>
-          <StatBar label="DAMAGE" value={weapon.damage} percent={weapon.damagePercent} color={r.color} />
-          <StatBar label="FIRE RATE" value={`${weapon.fireRate} RPM`} percent={weapon.fireRatePercent} color={r.color} />
-          <StatBar label="ACCURACY" value={`${weapon.accuracy}%`} percent={weapon.accuracyPercent} color={r.color} />
+          <StatBar label="DAMAGE"    value={weapon.damage}             percent={weapon.damagePercent}    color={r.color} />
+          <StatBar label="FIRE RATE" value={`${weapon.fireRate} RPM`}  percent={weapon.fireRatePercent}  color={r.color} />
+          <StatBar label="ACCURACY"  value={`${weapon.accuracy}%`}     percent={weapon.accuracyPercent}  color={r.color} />
         </div>
 
-        {/* Mod slots */}
         <div>
           <p className="text-xs font-mono tracking-[0.25em] mb-3" style={{ color: 'rgba(245,255,0,0.3)' }}>MOD SLOTS</p>
           <div className="flex gap-2">
@@ -319,9 +325,9 @@ function WeaponInspector({ weapon }) {
                 key={i}
                 className="flex-1 h-6 flex items-center justify-center"
                 style={{
-                  border: `1px solid ${i < weapon.slots ? r.color : 'rgba(255,255,255,0.07)'}`,
+                  border:     `1px solid ${i < weapon.slots ? r.color : 'rgba(255,255,255,0.07)'}`,
                   background: i < weapon.slots ? `${r.color}12` : 'transparent',
-                  boxShadow: i < weapon.slots ? `0 0 6px ${r.color}30` : 'none',
+                  boxShadow:  i < weapon.slots ? `0 0 6px ${r.color}30` : 'none',
                 }}
                 initial={{ opacity: 0, scaleX: 0 }}
                 animate={{ opacity: 1, scaleX: 1 }}
@@ -335,14 +341,13 @@ function WeaponInspector({ weapon }) {
           </div>
         </div>
 
-        {/* Metadata */}
         <div
           className="grid grid-cols-3 gap-4 py-3 px-4"
           style={{ border: '1px solid rgba(255,255,255,0.05)', background: '#060606' }}
         >
           {[
             { label: 'SERIAL', value: weapon.serial },
-            { label: 'CLASS', value: weapon.type },
+            { label: 'CLASS',  value: weapon.type },
             { label: 'ORIGIN', value: weapon.origin },
           ].map(m => (
             <div key={m.label}>
@@ -352,7 +357,6 @@ function WeaponInspector({ weapon }) {
           ))}
         </div>
 
-        {/* Actions */}
         <div className="flex gap-3 pb-2">
           <GlowButton color="yellow">INSPECT</GlowButton>
           <GlowButton color="cyan">EQUIP</GlowButton>
@@ -367,12 +371,12 @@ export default function Arsenal() {
   const [activeFilter, setActiveFilter] = useState(null)
   const [selected, setSelected] = useState(WEAPONS[0])
   const listRef = useRef(null)
+  const { isDesignMode } = useDesignMode()
 
   const filtered = activeFilter === null
     ? WEAPONS
     : WEAPONS.filter(w => w.type === activeFilter)
 
-  // When filter changes, auto-select first visible weapon
   useEffect(() => {
     if (!filtered.find(w => w.id === selected.id)) {
       setSelected(filtered[0] ?? WEAPONS[0])
@@ -388,7 +392,7 @@ export default function Arsenal() {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
     >
-      {/* Top system status bar */}
+      {/* System status bar */}
       <div style={{ paddingTop: '52px' }}>
         <SystemStatus />
       </div>
@@ -398,9 +402,16 @@ export default function Arsenal() {
 
         {/* LEFT — weapon list */}
         <div
-          className="flex flex-col shrink-0"
-          style={{ width: '288px', borderRight: '1px solid rgba(245,255,0,0.07)', background: '#050505' }}
+          className="flex flex-col shrink-0 relative"
+          style={{
+            width: '288px',
+            borderRight: '1px solid rgba(245,255,0,0.07)',
+            background: '#050505',
+            ...(isDesignMode ? { outline: '1px dashed rgba(245,255,0,0.45)' } : {}),
+          }}
         >
+          {isDesignMode && <ComponentTag name="WeaponList" accent="yellow" />}
+
           {/* Filter tabs */}
           <div
             className="flex flex-wrap gap-1.5 p-3 shrink-0"
@@ -460,7 +471,14 @@ export default function Arsenal() {
         </div>
 
         {/* RIGHT — inspector panel */}
-        <div className="flex-1 overflow-hidden" style={{ background: '#040404' }}>
+        <div
+          className="flex-1 overflow-hidden relative"
+          style={{
+            background: '#040404',
+            ...(isDesignMode ? { outline: '1px dashed rgba(0,255,255,0.3)' } : {}),
+          }}
+        >
+          {isDesignMode && <ComponentTag name="WeaponPanel" />}
           <AnimatePresence mode="wait">
             <WeaponInspector key={selected.id} weapon={selected} />
           </AnimatePresence>
