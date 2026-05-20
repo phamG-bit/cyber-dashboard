@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useDesignMode, ComponentTag } from '../context/DesignModeContext'
+import { useUISound } from '../hooks/useUISound'
 
 const NAV_ITEMS = [
   { label: 'DASHBOARD', page: 'dashboard' },
@@ -14,6 +15,7 @@ export default function Navbar({ activePage = 'dashboard', onNavigate }) {
   const [clock, setClock] = useState('')
   const [glitching, setGlitching] = useState(false)
   const { isDesignMode, toggleDesignMode } = useDesignMode()
+  const sounds = useUISound()
 
   useEffect(() => {
     const tick = () => setClock(new Date().toLocaleTimeString('en-US', { hour12: false }))
@@ -72,7 +74,7 @@ export default function Navbar({ activePage = 'dashboard', onNavigate }) {
           return (
             <div key={item.label} className="relative flex flex-col items-center gap-1">
               <motion.button
-                onClick={() => isNavigable && onNavigate?.(item.page)}
+                onClick={() => { if (isNavigable) { sounds.click(); onNavigate?.(item.page) } }}
                 className="text-xs font-mono tracking-widest transition-colors duration-150"
                 style={{
                   color:      isActive ? '#f5ff00' : isNavigable ? 'rgba(245,255,0,0.45)' : 'rgba(245,255,0,0.2)',
@@ -103,7 +105,7 @@ export default function Navbar({ activePage = 'dashboard', onNavigate }) {
       <div className="flex items-center gap-4">
         {/* Design mode toggle */}
         <motion.button
-          onClick={toggleDesignMode}
+          onClick={() => { sounds.toggle(!isDesignMode); toggleDesignMode() }}
           className="hidden sm:flex items-center gap-1.5 text-xs font-mono tracking-widest px-2.5 py-1 cursor-pointer"
           style={{
             border:     isDesignMode ? '1px solid #00ffff' : '1px solid rgba(245,255,0,0.2)',

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { useDesignMode, ComponentTag } from '../context/DesignModeContext'
+import { useUISound } from '../hooks/useUISound'
 
 const RARITY = {
   COMMON:    { color: '#00ffff' },
@@ -11,10 +12,11 @@ const RARITY = {
 export default function WeaponThumb({ weapon, isSelected, onClick, index }) {
   const r = RARITY[weapon.rarity] ?? RARITY.COMMON
   const { isDesignMode } = useDesignMode()
+  const sounds = useUISound()
 
   return (
     <motion.div
-      onClick={onClick}
+      onClick={() => { sounds.click(); onClick?.() }}
       className="flex items-center gap-3 px-4 py-3 cursor-pointer relative overflow-hidden"
       style={{
         borderLeft: `2px solid ${isSelected ? r.color : 'transparent'}`,

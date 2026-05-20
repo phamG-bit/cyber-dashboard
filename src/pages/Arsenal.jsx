@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import WeaponThumb from '../components/WeaponThumb'
 import GlowButton from '../components/GlowButton'
 import { useDesignMode, ComponentTag } from '../context/DesignModeContext'
+import { useUISound } from '../hooks/useUISound'
 
 const WEAPONS = [
   {
@@ -358,9 +359,9 @@ function WeaponInspector({ weapon }) {
         </div>
 
         <div className="flex gap-3 pb-2">
-          <GlowButton color="yellow">INSPECT</GlowButton>
-          <GlowButton color="cyan">EQUIP</GlowButton>
-          <GlowButton color="red">SELL</GlowButton>
+          <GlowButton color="yellow" sound="scan">INSPECT</GlowButton>
+          <GlowButton color="cyan" sound="equip">EQUIP</GlowButton>
+          <GlowButton color="red" sound="warning">SELL</GlowButton>
         </div>
       </div>
     </motion.div>
@@ -372,6 +373,7 @@ export default function Arsenal() {
   const [selected, setSelected] = useState(WEAPONS[0])
   const listRef = useRef(null)
   const { isDesignMode } = useDesignMode()
+  const sounds = useUISound()
 
   const filtered = activeFilter === null
     ? WEAPONS
@@ -422,7 +424,7 @@ export default function Arsenal() {
               return (
                 <motion.button
                   key={f.label}
-                  onClick={() => setActiveFilter(f.match)}
+                  onClick={() => { sounds.click(); setActiveFilter(f.match) }}
                   className="px-2.5 py-1 text-xs font-mono tracking-widest cursor-pointer"
                   style={{
                     border:     isActive ? '1px solid #f5ff00' : '1px solid rgba(245,255,0,0.12)',
