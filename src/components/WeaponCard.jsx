@@ -27,9 +27,9 @@ export default function WeaponCard({ weapon, index = 0 }) {
         }}
         transition={{ duration: 0.25 }}
       >
-        {/* ── Image placeholder ── */}
+        {/* ── Image area ── */}
         <div className="relative h-44 overflow-hidden" style={{ background: '#050505' }}>
-          {/* Tech grid */}
+          {/* Tech grid (always rendered — visible behind transparent PNGs) */}
           <div
             className="absolute inset-0"
             style={{
@@ -37,17 +37,30 @@ export default function WeaponCard({ weapon, index = 0 }) {
               backgroundSize: '22px 22px',
             }}
           />
-          {/* Corner HUD brackets */}
-          <span className="absolute top-2 left-2 w-4 h-4 border-t border-l" style={{ borderColor: `${r.color}30` }} />
-          <span className="absolute top-2 right-2 w-4 h-4 border-t border-r" style={{ borderColor: `${r.color}30` }} />
-          <span className="absolute bottom-2 left-2 w-4 h-4 border-b border-l" style={{ borderColor: `${r.color}30` }} />
-          <span className="absolute bottom-2 right-2 w-4 h-4 border-b border-r" style={{ borderColor: `${r.color}30` }} />
-          {/* Placeholder label */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-xs font-mono tracking-[0.3em]" style={{ color: `${r.color}18` }}>
-              [ IMG PENDING ]
-            </span>
-          </div>
+
+          {weapon.image ? (
+            /* Real weapon image — centered, contain-fit, slight drop shadow */
+            <img
+              src={weapon.image}
+              alt={weapon.name}
+              className="absolute inset-0 w-full h-full object-contain p-4"
+              style={{ filter: `drop-shadow(0 0 12px ${r.color}60) drop-shadow(0 4px 8px rgba(0,0,0,0.8))` }}
+            />
+          ) : (
+            /* Placeholder for weapons without an image yet */
+            <>
+              <span className="absolute top-2 left-2 w-4 h-4 border-t border-l" style={{ borderColor: `${r.color}30` }} />
+              <span className="absolute top-2 right-2 w-4 h-4 border-t border-r" style={{ borderColor: `${r.color}30` }} />
+              <span className="absolute bottom-2 left-2 w-4 h-4 border-b border-l" style={{ borderColor: `${r.color}30` }} />
+              <span className="absolute bottom-2 right-2 w-4 h-4 border-b border-r" style={{ borderColor: `${r.color}30` }} />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-xs font-mono tracking-[0.3em]" style={{ color: `${r.color}18` }}>
+                  [ IMG PENDING ]
+                </span>
+              </div>
+            </>
+          )}
+
           {/* Rarity glow bar at top */}
           <div className="absolute top-0 left-0 right-0 h-px" style={{ background: `linear-gradient(90deg, transparent, ${r.color}60, transparent)` }} />
 

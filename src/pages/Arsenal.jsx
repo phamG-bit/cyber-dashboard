@@ -81,6 +81,20 @@ const WEAPONS = [
     damagePercent: 86,
     slots: 3,
   },
+  {
+    id: 7,
+    name: 'MALORIAN ARMS 3516',
+    type: 'PISTOL',
+    manufacturer: 'Malorian Arms',
+    rarity: 'LEGENDARY',
+    damage: 1560,
+    fireRate: 320,
+    accuracy: 96,
+    price: 78000,
+    damagePercent: 100,
+    slots: 4,
+    image: '/weapons/malorian-3516.png',
+  },
 ]
 
 const FILTERS = [
