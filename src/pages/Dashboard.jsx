@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import AnalyticsCard from '../components/AnalyticsCard'
 import TerminalPanel from '../components/TerminalPanel'
@@ -37,6 +38,8 @@ const itemVariants = {
 }
 
 export default function Dashboard() {
+  const [sessionId] = useState(() => Math.random().toString(36).slice(2, 11).toUpperCase())
+
   return (
     // Root fade-in is explicit — variant-only transitions don't animate the
     // container's own opacity when the transition only has staggerChildren.
@@ -65,7 +68,7 @@ export default function Dashboard() {
             </h2>
           </div>
           <p className="text-xs font-mono text-neon-cyan/40 tracking-widest ml-4">
-            CLEARANCE LEVEL: ALPHA // SESSION: {Math.random().toString(36).substr(2, 9).toUpperCase()}
+            CLEARANCE LEVEL: ALPHA // SESSION: {sessionId}
           </p>
         </motion.div>
 
