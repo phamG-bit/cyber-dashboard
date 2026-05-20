@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: #000000;
+  color: #f5ff00;
+  font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+  overflow-x: hidden;
+}
+
+/* Static CRT scanline overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.07) 2px,
+    rgba(0, 0, 0, 0.07) 4px
+  );
+}
+
+#root {
+  min-height: 100vh;
+}
+
+@layer utilities {
+  .text-glow-yellow {
+    text-shadow: 0 0 6px #f5ff00, 0 0 12px #f5ff00, 0 0 24px rgba(245, 255, 0, 0.6);
+  }
+  .text-glow-cyan {
+    text-shadow: 0 0 6px #00ffff, 0 0 12px #00ffff, 0 0 24px rgba(0, 255, 255, 0.6);
+  }
+  .text-glow-red {
+    text-shadow: 0 0 6px #ff0033, 0 0 12px #ff0033;
+  }
+  .border-glow-yellow {
+    box-shadow: 0 0 0 1px #f5ff00, 0 0 8px #f5ff00, inset 0 0 8px rgba(245, 255, 0, 0.1);
+  }
+  .border-glow-cyan {
+    box-shadow: 0 0 0 1px #00ffff, 0 0 8px #00ffff, inset 0 0 8px rgba(0, 255, 255, 0.1);
+  }
+  .border-glow-red {
+    box-shadow: 0 0 0 1px #ff0033, 0 0 8px #ff0033, inset 0 0 8px rgba(255, 0, 51, 0.1);
+  }
+}
